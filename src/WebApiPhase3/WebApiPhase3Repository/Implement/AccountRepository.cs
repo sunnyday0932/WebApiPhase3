@@ -1,0 +1,229 @@
+﻿using Dapper;
+using System.Collections.Generic;
+using System.Data;
+using System.Threading.Tasks;
+using WebApiPhase3Repository.Conditions;
+using WebApiPhase3Repository.DataModels;
+using WebApiPhase3Repository.Infrastructure;
+using WebApiPhase3Repository.Interface;
+
+namespace WebApiPhase3Repository.Implement
+{
+    public class AccountRepository : IAccountRepository
+    {
+        private readonly IDatabaseHelper _databaseHelper;
+
+        public AccountRepository(IDatabaseHelper databaseHelper)
+        {
+            this._databaseHelper = databaseHelper;
+        }
+
+        /// <summary>
+        /// 新增帳號
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public async Task<bool> AddAccount(AccountCondition condition)
+        {
+            var sql = @"INSERT users
+                               (account,
+                                password,
+                                phone,
+                                email,
+                                createdate,
+                                modifydate,
+                                modifyuser)
+                        VALUES(@Account,
+                               @Password,
+                               @Phone,
+                               @Email,
+                               @CreateDate,
+                               @ModifyDate,
+                               @ModifyUser) ";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Account", condition.Account, DbType.String);
+            parameters.Add("@Password", condition.Password, DbType.String);
+            parameters.Add("@Phone", condition.Phone, DbType.String);
+            parameters.Add("@Email", condition.Email, DbType.String);
+            parameters.Add("@CreateDate", condition.CreateDate, DbType.DateTime);
+            parameters.Add("@ModifyDate", condition.ModifyDate, DbType.DateTime);
+            parameters.Add("@ModifyUser", condition.ModifyUser, DbType.String);
+
+            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            {
+                var result = await conn.ExecuteAsync(
+                    sql,
+                    parameters);
+
+                return result > 0;
+            }
+        }
+
+        /// <summary>
+        /// 忘記密碼
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public async Task<bool> ForgetPassword(AccountCondition condition)
+        {
+            var sql = @"  UPDATE Users
+                          SET Password = @Password
+                          WHERE Account = @Account";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Password", condition.Password, DbType.String);
+            parameters.Add("@Account", condition.Account, DbType.String);
+
+            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            {
+                var result = await conn.ExecuteAsync(
+                    sql,
+                    parameters);
+
+                return result > 0;
+            }
+        }
+
+        /// <summary>
+        /// 取得單筆帳號資訊
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public async Task<AccountDataModel> GetAccount(string account)
+        {
+            var sql = @"SELECT [Account]
+                              ,[Password]
+                              ,[Phone]
+                              ,[Email]
+                              ,[CreateDate]
+                              ,[ModifyDate]
+                              ,[ModifyUser]
+                          FROM [Northwind].[dbo].[Users]
+                          WHERE Account = @Account";
+
+            var parameter = new DynamicParameters();
+            parameter.Add("@Account", account, DbType.String);
+
+            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            {
+                var result = await conn.QueryFirstOrDefaultAsync<AccountDataModel>(
+                    sql,
+                    parameter);
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 取得帳號列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<AccountDataModel>> GetAccountList()
+        {
+            var sql = @"SELECT [Account]
+                              ,[Password]
+                              ,[Phone]
+                              ,[Email]
+                              ,[CreateDate]
+                              ,[ModifyDate]
+                              ,[ModifyUser]
+                          FROM [Northwind].[dbo].[Users]";
+
+            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            {
+                var result = await conn.QueryAsync<AccountDataModel>(
+                    sql);
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 取得密碼
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public async Task<string> GetAccountPassword(string account)
+        {
+            var sql = @"SELECT Password
+                        FROM Users
+                        WHERE Account = @Account";
+
+            var parameter = new DynamicParameters();
+            parameter.Add("@Account", account, DbType.String);
+
+            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            {
+                var result = await conn.QueryFirstOrDefaultAsync<string>(
+                    sql,
+                    parameter);
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 刪除帳號
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public async Task<bool> RemoveAccount(string account)
+        {
+            var sql = @"Delete Users
+                        WHERE Account = @Account";
+
+            var parameter = new DynamicParameters();
+            parameter.Add("@Account", account, DbType.String);
+
+            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            {
+                var result = await conn.ExecuteAsync(
+                    sql,
+                    parameter);
+
+                return result > 0;
+            }
+        }
+
+        /// <summary>
+        /// 更新帳號資訊
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateAccount(AccountCondition condition)
+        {
+            var sql = @"Update Users
+                        SET ModifyDate = @ModifyDate,
+                            ModifyUser = @ModifyUser";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@ModifyDate", condition.ModifyDate, DbType.DateTime);
+            parameters.Add("@ModifyUser", condition.ModifyUser, DbType.String);
+            parameters.Add("@Account", condition.Account, DbType.String);
+
+            if (string.IsNullOrWhiteSpace(condition.Email).Equals(false))
+            {
+                sql += @", Email = @Email ";
+                parameters.Add("@Email", condition.Email, DbType.String);
+            }
+
+            if (string.IsNullOrWhiteSpace(condition.Phone).Equals(false))
+            {
+                sql += @", Phone = @Phone ";
+                parameters.Add("@Phone", condition.Phone, DbType.String);
+            }
+
+            sql += @" WHERE Account = @Account";
+
+            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            {
+                var result = await conn.ExecuteAsync(
+                    sql,
+                    parameters);
+
+                return result > 0;
+            }
+        }
+    }
+}
