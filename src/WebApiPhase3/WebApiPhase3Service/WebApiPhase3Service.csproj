@@ -8,4 +8,8 @@
     <ProjectReference Include="..\WebApiPhase3Repository\WebApiPhase3Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
 </Project>
