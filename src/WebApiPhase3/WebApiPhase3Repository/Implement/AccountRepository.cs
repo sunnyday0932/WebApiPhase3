@@ -11,10 +11,13 @@ namespace WebApiPhase3Repository.Implement
 {
     public class AccountRepository : IAccountRepository
     {
+        private readonly string _connectionString;
         private readonly IDatabaseHelper _databaseHelper;
 
-        public AccountRepository(IDatabaseHelper databaseHelper)
+        public AccountRepository(string connectionString,
+            IDatabaseHelper databaseHelper)
         {
+            this._connectionString = connectionString;
             this._databaseHelper = databaseHelper;
         }
 
@@ -50,7 +53,7 @@ namespace WebApiPhase3Repository.Implement
             parameters.Add("@ModifyDate", condition.ModifyDate, DbType.DateTime);
             parameters.Add("@ModifyUser", condition.ModifyUser, DbType.String);
 
-            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
             {
                 var result = await conn.ExecuteAsync(
                     sql,
@@ -75,7 +78,7 @@ namespace WebApiPhase3Repository.Implement
             parameters.Add("@Password", condition.Password, DbType.String);
             parameters.Add("@Account", condition.Account, DbType.String);
 
-            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
             {
                 var result = await conn.ExecuteAsync(
                     sql,
@@ -105,7 +108,7 @@ namespace WebApiPhase3Repository.Implement
             var parameter = new DynamicParameters();
             parameter.Add("@Account", account, DbType.String);
 
-            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
             {
                 var result = await conn.QueryFirstOrDefaultAsync<AccountDataModel>(
                     sql,
@@ -130,7 +133,7 @@ namespace WebApiPhase3Repository.Implement
                               ,[ModifyUser]
                           FROM [Northwind].[dbo].[Users]";
 
-            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
             {
                 var result = await conn.QueryAsync<AccountDataModel>(
                     sql);
@@ -153,7 +156,7 @@ namespace WebApiPhase3Repository.Implement
             var parameter = new DynamicParameters();
             parameter.Add("@Account", account, DbType.String);
 
-            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
             {
                 var result = await conn.QueryFirstOrDefaultAsync<string>(
                     sql,
@@ -176,7 +179,7 @@ namespace WebApiPhase3Repository.Implement
             var parameter = new DynamicParameters();
             parameter.Add("@Account", account, DbType.String);
 
-            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
             {
                 var result = await conn.ExecuteAsync(
                     sql,
@@ -216,7 +219,7 @@ namespace WebApiPhase3Repository.Implement
 
             sql += @" WHERE Account = @Account";
 
-            using (IDbConnection conn = this._databaseHelper.GetConnection())
+            using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
             {
                 var result = await conn.ExecuteAsync(
                     sql,

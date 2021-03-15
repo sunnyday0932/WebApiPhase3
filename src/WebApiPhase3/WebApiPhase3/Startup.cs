@@ -35,12 +35,18 @@ namespace WebApiPhase3
         public void ConfigureServices(IServiceCollection services)
         {
             //取得連線字串
-            var connection = this.GetConnection("Northwind");
-            services.AddScoped<IDatabaseHelper>(x => new DatabaseHelper(connection));
+            var northwindConnection = this.GetConnection("Northwind");
 
             //注入註冊
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddSingleton<IDatabaseHelper, DatabaseHelper>()
+                .AddScoped<IAccountRepository, AccountRepository>(
+                sp =>
+                {
+                    return new AccountRepository(
+                        northwindConnection,
+                        sp.GetRequiredService<IDatabaseHelper>());
+                });
 
             //AutoMapper
             services.AddAutoMapper(

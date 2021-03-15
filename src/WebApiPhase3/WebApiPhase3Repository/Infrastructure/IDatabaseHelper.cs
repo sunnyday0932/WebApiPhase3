@@ -8,6 +8,6 @@ namespace WebApiPhase3Repository.Infrastructure
         /// 建立連線
         /// </summary>
         /// <returns></returns>
-        IDbConnection GetConnection();
+        IDbConnection GetConnection(string connectionString);
     }
 }

@@ -5,20 +5,13 @@ namespace WebApiPhase3Repository.Infrastructure
 {
     public class DatabaseHelper : IDatabaseHelper
     {
-        private readonly string _connectionString;
-
-        public DatabaseHelper(string connectionString)
-        {
-            this._connectionString = connectionString;
-        }
-
         /// <summary>
         /// 建立連線
         /// </summary>
         /// <returns></returns>
-        public IDbConnection GetConnection()
+        public IDbConnection GetConnection(string connectionString)
         {
-            var conn = new SqlConnection(this._connectionString);
+            var conn = new SqlConnection(connectionString);
 
             return conn;
         }
