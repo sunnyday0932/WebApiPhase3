@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApiPhase3.Infrastructure;
+using WebApiPhase3.Infrastructure.Validator;
 using WebApiPhase3.Parameters;
 using WebApiPhase3.ViewModles;
 using WebApiPhase3Service.InfoModels;
@@ -64,6 +66,7 @@ namespace WebApiPhase3.Controller
         /// <returns></returns>
         [Route("")]
         [HttpPost]
+        [ValidatorParameter(typeof(AccountValidator))]
         public async Task<ResultViewModel> AddAccount([FromBody] AccountParameter parameter)
         {
             var info = this._mapper.Map<AccountInfoModel>(parameter);

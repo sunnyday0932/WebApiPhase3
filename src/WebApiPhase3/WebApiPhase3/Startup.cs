@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebApiPhase3.Infrastructure;
 using WebApiPhase3.Mapping;
 using WebApiPhase3Repository.Implement;
 using WebApiPhase3Repository.Infrastructure;
@@ -53,7 +55,10 @@ namespace WebApiPhase3
                 typeof(ControllerProfile),
                 typeof(ServiceProfile));
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<ValidatorParameterAttribute>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
