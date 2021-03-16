@@ -23,7 +23,7 @@ namespace WebApiPhase3.Infrastructure
             this._type = type;
         }
 
-        public async Task OnActionExecuteAsync(
+        public override async Task OnActionExecutionAsync(
             ActionExecutingContext actionContext,
             ActionExecutionDelegate next)
         {
@@ -35,7 +35,8 @@ namespace WebApiPhase3.Infrastructure
 
             try
             {
-                var validationResult = validator.Validate((IValidationContext)actionContext.ActionArguments.First().Value);
+                var context = new ValidationContext<object>(actionContext.ActionArguments.First().Value);
+                var validationResult = validator.Validate(context);
 
                 if (!validationResult.IsValid)
                 {
@@ -53,7 +54,6 @@ namespace WebApiPhase3.Infrastructure
                             Domain = "localhost",
                             ErrorCode = 40000,
                             Message = errorMessage,
-                            Description = errorMessage
                         }
                     };
                     actionContext.Result = new ObjectResult(modelState)
