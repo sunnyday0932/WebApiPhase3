@@ -87,7 +87,7 @@ namespace WebApiPhase3.Controller
         [ValidatorParameter(typeof(RemoveValidator))]
         public async Task<ResultViewModel> RemoveAccount([FromBody] AccountParameter parameter)
         {
-            var info = this._mapper.Map<AccountInfoModel>(parameter);
+            var info = this._mapper.Map<RemoveAccountInfoModel>(parameter);
             var data = await this._accountService.RemoveAccount(info);
             var result = this._mapper.Map<ResultViewModel>(data);
 

@@ -39,7 +39,7 @@ namespace WebApiPhase3Repository.Interface
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        Task<bool> UpdateAccount(AccountCondition condition);
+        Task<bool> UpdateAccount(UpdateAccountCondition condition);
 
         /// <summary>
         /// 取得密碼
@@ -53,6 +53,6 @@ namespace WebApiPhase3Repository.Interface
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        Task<bool> ForgetPassword(AccountCondition condition);
+        Task<bool> ForgetPassword(ForgetAccountCondition condition);
     }
 }

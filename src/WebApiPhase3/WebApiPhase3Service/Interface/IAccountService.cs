@@ -32,7 +32,7 @@ namespace WebApiPhase3Service.Interface
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        Task<ResultDto> RemoveAccount(AccountInfoModel info);
+        Task<ResultDto> RemoveAccount(RemoveAccountInfoModel info);
 
         /// <summary>
         /// 更新帳號資訊

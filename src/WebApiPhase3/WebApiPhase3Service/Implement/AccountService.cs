@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiPhase3Common;
 using WebApiPhase3Repository.Conditions;
 using WebApiPhase3Repository.Interface;
 using WebApiPhase3Service.Dtos;
@@ -40,14 +41,8 @@ namespace WebApiPhase3Service.Implement
         /// <exception cref="NotImplementedException"></exception>
         public async Task<ResultDto> AddAccount(AccountInfoModel info)
         {
-            //a、所有欄位皆須輸入。
-            if (string.IsNullOrWhiteSpace(info.Account) ||
-                string.IsNullOrWhiteSpace(info.Email) ||
-                string.IsNullOrWhiteSpace(info.Password) ||
-                string.IsNullOrWhiteSpace(info.Phone))
-            {
-                throw new Exception("請檢查輸入欄位，缺一不可！");
-            }
+            //a、驗證輸入欄位。
+            ModelValidator.Validate(info, nameof(info));
 
             var condition = this._mapper.Map<AccountCondition>(info);
 
@@ -142,13 +137,7 @@ namespace WebApiPhase3Service.Implement
         /// <exception cref="NotImplementedException"></exception>
         public async Task<ResultDto> ForgetPassword(AccountInfoModel info)
         {
-            if (string.IsNullOrWhiteSpace(info.Account) ||
-                string.IsNullOrWhiteSpace(info.Email) ||
-                string.IsNullOrWhiteSpace(info.Phone) ||
-                string.IsNullOrWhiteSpace(info.Password))
-            {
-                throw new Exception("請檢查輸入欄位，缺一不可！");
-            }
+            ModelValidator.Validate(info, nameof(info));
 
             var checkInfo = await this._accountRepository.GetAccount(info.Account);
             if (checkInfo == null)
@@ -178,7 +167,7 @@ namespace WebApiPhase3Service.Implement
                 };
             }
 
-            var condition = this._mapper.Map<AccountCondition>(info);
+            var condition = this._mapper.Map<ForgetAccountCondition>(info);
             condition.ModifyDate = DateTime.Now;
             condition.ModifyUser = condition.Account;
             condition.Password = this.ConverPassword(condition.Account, condition.Password);
@@ -200,10 +189,7 @@ namespace WebApiPhase3Service.Implement
         /// <exception cref="Exception">Account 不可為空 !</exception>
         public async Task<AccountDto> GetAccount(string account)
         {
-            if (string.IsNullOrWhiteSpace(account))
-            {
-                throw new Exception("Account 不可為空 !");
-            }
+            account.CheckNotNullOrEmpty(nameof(account));
 
             var data = await this._accountRepository.GetAccount(account);
             var result = this._mapper.Map<AccountDto>(data);
@@ -266,14 +252,9 @@ namespace WebApiPhase3Service.Implement
         /// <param name="info"></param>
         /// <returns></returns>
         /// <exception cref="Exception">請檢查輸入欄位，缺一不可！</exception>
-        public async Task<ResultDto> RemoveAccount(AccountInfoModel info)
+        public async Task<ResultDto> RemoveAccount(RemoveAccountInfoModel info)
         {
-            if (string.IsNullOrWhiteSpace(info.Account) ||
-                string.IsNullOrWhiteSpace(info.Email) ||
-                string.IsNullOrWhiteSpace(info.Phone))
-            {
-                throw new Exception("請檢查輸入欄位，缺一不可！");
-            }
+            ModelValidator.Validate(info, nameof(info));
 
             var checkInfo = await this._accountRepository.GetAccount(info.Account);
 
@@ -321,11 +302,7 @@ namespace WebApiPhase3Service.Implement
         /// <exception cref="Exception">請檢查輸入欄位，缺一不可！</exception>
         public async Task<ResultDto> UpdateAccount(AccountInfoModel info)
         {
-            if (string.IsNullOrWhiteSpace(info.Account) ||
-                string.IsNullOrWhiteSpace(info.Password))
-            {
-                throw new Exception("請檢查輸入欄位，缺一不可！");
-            }
+            ModelValidator.Validate(info, nameof(info));
 
             var checkPassword = await this._accountRepository.GetAccountPassword(info.Account);
 
@@ -349,7 +326,7 @@ namespace WebApiPhase3Service.Implement
                 };
             }
 
-            var condition = this._mapper.Map<AccountCondition>(info);
+            var condition = this._mapper.Map<UpdateAccountCondition>(info);
             condition.ModifyDate = DateTime.Now;
             condition.ModifyUser = info.Account;
 

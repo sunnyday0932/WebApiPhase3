@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace WebApiPhase3Service.InfoModels
+namespace WebApiPhase3Repository.Conditions
 {
-    public class AccountInfoModel
+    public class ForgetAccountCondition
     {
         /// <summary>
         /// 帳號
@@ -19,17 +20,16 @@ namespace WebApiPhase3Service.InfoModels
         public string Password { get; set; }
 
         /// <summary>
-        /// 電話號碼
+        /// 異動日期
         /// </summary>
         [Required]
-        [StringLength(20)]
-        public string Phone { get; set; }
+        public DateTime ModifyDate { get; set; }
 
         /// <summary>
-        /// 信箱
+        /// 異動者
         /// </summary>
         [Required]
-        [StringLength(20)]
-        public string Email { get; set; }
+        [StringLength(30)]
+        public string ModifyUser { get; set; }
     }
 }

@@ -12,6 +12,7 @@ namespace WebApiPhase3.Mapping
         {
             this.CreateMap<AccountDto, AccountViewModel>();
             this.CreateMap<AccountParameter, AccountInfoModel>();
+            this.CreateMap<AccountParameter, RemoveAccountInfoModel>();
             this.CreateMap<ResultDto, ResultViewModel>();
         }
     }

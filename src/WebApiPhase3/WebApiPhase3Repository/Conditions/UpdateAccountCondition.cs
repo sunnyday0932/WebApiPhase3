@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApiPhase3Repository.Conditions
 {
-    public class AccountCondition
+    public class UpdateAccountCondition
     {
         /// <summary>
         /// 帳號
@@ -13,31 +13,16 @@ namespace WebApiPhase3Repository.Conditions
         public string Account { get; set; }
 
         /// <summary>
-        /// 密碼
-        /// </summary>
-        [Required]
-        [StringLength(50)]
-        public string Password { get; set; }
-
-        /// <summary>
         /// 電話號碼
         /// </summary>
-        [Required]
         [StringLength(20)]
         public string Phone { get; set; }
 
         /// <summary>
         /// 信箱
         /// </summary>
-        [Required]
         [StringLength(50)]
         public string Email { get; set; }
-
-        /// <summary>
-        /// 新增日期
-        /// </summary>
-        [Required]
-        public DateTime CreateDate { get; set; }
 
         /// <summary>
         /// 異動日期

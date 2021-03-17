@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using WebApiPhase3Common;
 using WebApiPhase3Repository.Conditions;
 using WebApiPhase3Repository.DataModels;
 using WebApiPhase3Repository.Infrastructure;
@@ -28,6 +29,8 @@ namespace WebApiPhase3Repository.Implement
         /// <returns></returns>
         public async Task<bool> AddAccount(AccountCondition condition)
         {
+            ModelValidator.Validate(condition, nameof(condition));
+
             var sql = @"INSERT users
                                (account,
                                 password,
@@ -68,15 +71,21 @@ namespace WebApiPhase3Repository.Implement
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public async Task<bool> ForgetPassword(AccountCondition condition)
+        public async Task<bool> ForgetPassword(ForgetAccountCondition condition)
         {
+            ModelValidator.Validate(condition, nameof(condition));
+
             var sql = @"  UPDATE Users
-                          SET Password = @Password
+                          SET Password = @Password,
+                              Modifydate = @Modifydate,
+                              Modifyuser = @Modifyuser
                           WHERE Account = @Account";
 
             var parameters = new DynamicParameters();
             parameters.Add("@Password", condition.Password, DbType.String);
             parameters.Add("@Account", condition.Account, DbType.String);
+            parameters.Add("@Modifydate", condition.ModifyDate, DbType.DateTime);
+            parameters.Add("@Modifyuser", condition.ModifyUser, DbType.String);
 
             using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
             {
@@ -95,6 +104,8 @@ namespace WebApiPhase3Repository.Implement
         /// <returns></returns>
         public async Task<AccountDataModel> GetAccount(string account)
         {
+            account.CheckNotNullOrEmpty(nameof(account));
+
             var sql = @"SELECT [Account]
                               ,[Password]
                               ,[Phone]
@@ -149,6 +160,8 @@ namespace WebApiPhase3Repository.Implement
         /// <returns></returns>
         public async Task<string> GetAccountPassword(string account)
         {
+            account.CheckNotNullOrEmpty(nameof(account));
+
             var sql = @"SELECT Password
                         FROM Users
                         WHERE Account = @Account";
@@ -173,6 +186,8 @@ namespace WebApiPhase3Repository.Implement
         /// <returns></returns>
         public async Task<bool> RemoveAccount(string account)
         {
+            account.CheckNotNullOrEmpty(nameof(account));
+
             var sql = @"Delete Users
                         WHERE Account = @Account";
 
@@ -194,8 +209,10 @@ namespace WebApiPhase3Repository.Implement
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public async Task<bool> UpdateAccount(AccountCondition condition)
+        public async Task<bool> UpdateAccount(UpdateAccountCondition condition)
         {
+            ModelValidator.Validate(condition, nameof(condition));
+
             var sql = @"Update Users
                         SET ModifyDate = @ModifyDate,
                             ModifyUser = @ModifyUser";

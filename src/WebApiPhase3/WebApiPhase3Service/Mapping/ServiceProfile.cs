@@ -15,6 +15,8 @@ namespace WebApiPhase3Service.Mapping
                 .ForMember(x => x.ModifyDate, y => y.MapFrom(z => z.ModifyDate.HasValue ? z.ModifyDate.Value.ToString("yyyy/MM/dd") : null));
 
             this.CreateMap<AccountInfoModel, AccountCondition>();
+            this.CreateMap<AccountInfoModel, ForgetAccountCondition>();
+            this.CreateMap<AccountInfoModel, UpdateAccountCondition>();
         }
     }
 }

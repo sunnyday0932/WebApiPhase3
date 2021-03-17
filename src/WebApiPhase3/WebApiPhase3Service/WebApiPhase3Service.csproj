@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WebApiPhase3Common\WebApiPhase3Common.csproj" />
     <ProjectReference Include="..\WebApiPhase3Repository\WebApiPhase3Repository.csproj" />
   </ItemGroup>
 

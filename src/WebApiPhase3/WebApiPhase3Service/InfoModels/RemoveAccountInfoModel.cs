@@ -2,7 +2,7 @@
 
 namespace WebApiPhase3Service.InfoModels
 {
-    public class AccountInfoModel
+    public class RemoveAccountInfoModel
     {
         /// <summary>
         /// 帳號
@@ -10,13 +10,6 @@ namespace WebApiPhase3Service.InfoModels
         [Required]
         [StringLength(30)]
         public string Account { get; set; }
-
-        /// <summary>
-        /// 密碼
-        /// </summary>
-        [Required]
-        [StringLength(50)]
-        public string Password { get; set; }
 
         /// <summary>
         /// 電話號碼
