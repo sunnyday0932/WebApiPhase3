@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebApiPhase3Common.Model;
 using WebApiPhase3Service.Dtos;
 using WebApiPhase3Service.InfoModels;
 
@@ -18,7 +19,7 @@ namespace WebApiPhase3Service.Interface
         /// 取得帳號列表
         /// </summary>
         /// <returns></returns>
-        Task<IEnumerable<AccountDto>> GetAccountList();
+        Task<IEnumerable<AccountDto>> GetAccountList(PagingInfoModel paing);
 
         /// <summary>
         /// 新增帳號

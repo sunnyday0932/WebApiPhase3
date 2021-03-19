@@ -6,7 +6,9 @@ using WebApiPhase3.Infrastructure;
 using WebApiPhase3.Infrastructure.Validator;
 using WebApiPhase3.Infrastructure.Validator.Account;
 using WebApiPhase3.Parameters;
+using WebApiPhase3.ViewModels;
 using WebApiPhase3.ViewModles;
+using WebApiPhase3Common.Model;
 using WebApiPhase3Service.InfoModels;
 using WebApiPhase3Service.Interface;
 
@@ -52,12 +54,22 @@ namespace WebApiPhase3.Controller
         /// <returns></returns>
         [Route("")]
         [HttpGet]
-        public async Task<IEnumerable<AccountViewModel>> GetAccountList()
+        public async Task<PagingViewModel<AccountViewModel>> GetAccountList(
+            [FromQuery] PagingParameter paging = default(PagingParameter))
         {
-            var data = await this._accountService.GetAccountList();
-            var result = this._mapper.Map<IEnumerable<AccountViewModel>>(data);
+            var pagingInfo = this._mapper.Map<PagingInfoModel>(paging);
+            var data = await this._accountService.GetAccountList(pagingInfo);
+            paging.TotalCount = pagingInfo.TotalCount;
+            paging.PageIndex = pagingInfo.PageIndex;
 
-            return result;
+            var result = this._mapper.Map<IEnumerable<AccountViewModel>>(data);
+            var pagingResult = this._mapper.Map<PageViewModel>(paging);
+
+            return new PagingViewModel<AccountViewModel>
+            {
+                Paging = pagingResult,
+                Result = result
+            };
         }
 
         /// <summary>

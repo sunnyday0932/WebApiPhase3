@@ -7,6 +7,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using WebApiPhase3Common;
+using WebApiPhase3Common.Helper;
+using WebApiPhase3Common.Model;
 using WebApiPhase3Repository.Conditions;
 using WebApiPhase3Repository.Interface;
 using WebApiPhase3Service.Dtos;
@@ -32,6 +34,17 @@ namespace WebApiPhase3Service.Implement
             this._accountRepository = accountRepository;
             this._mapper = mapper;
         }
+
+        private static readonly Dictionary<string, Func<AccountDto, object>> _accountListColumMap =
+            new Dictionary<string, Func<AccountDto, object>>
+            {
+                ["account"] = row => row.Account,
+                ["phone"] = row => row.Phone,
+                ["email"] = row => row.Email,
+                ["createDate"] = row => row.CreateDate,
+                ["modifyDate"] = row => row.ModifyDate,
+                ["modifyUser"] = row => row.ModifyUser
+            };
 
         /// <summary>
         /// 新增帳號
@@ -221,7 +234,7 @@ namespace WebApiPhase3Service.Implement
         /// 取得帳號列表
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<AccountDto>> GetAccountList()
+        public async Task<IEnumerable<AccountDto>> GetAccountList(PagingInfoModel paging)
         {
             IEnumerable<AccountDto> result;
             var data = await this._accountRepository.GetAccountList();
@@ -237,6 +250,15 @@ namespace WebApiPhase3Service.Implement
                     ModifyDate = x.ModifyDate.HasValue ? x.ModifyDate.Value.ToString("yyyy/MM/dd") : null,
                     ModifyUser = x?.ModifyUser
                 });
+
+                if (string.IsNullOrWhiteSpace(paging.OrderColumName))
+                {
+                    result = result.Order(ref paging);
+                }
+                else
+                {
+                    result = result.Order(_accountListColumMap[paging.OrderColumName], ref paging);
+                }
             }
             else
             {
