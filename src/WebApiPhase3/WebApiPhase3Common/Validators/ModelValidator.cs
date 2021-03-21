@@ -31,7 +31,7 @@ namespace WebApiPhase3Common
                 errors.Any().Equals(true))
             {
                 var error = errors.FirstOrDefault();
-                throw new ArgumentException(message: error.ErrorMessage, paramName: error.MemberNames.FirstOrDefault());
+                throw new ArgumentException(message: "請檢查輸入欄位", paramName: error.MemberNames.FirstOrDefault());
             }
         }
     }
