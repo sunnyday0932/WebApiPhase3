@@ -23,7 +23,7 @@ namespace WebApiPhase3Repository.Conditions
         /// 異動日期
         /// </summary>
         [Required]
-        public DateTime ModifyDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
 
         /// <summary>
         /// 異動者
