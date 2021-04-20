@@ -245,9 +245,9 @@ namespace WebApiPhase3Service.Implement
                 {
                     Phone = ConvertPhoneNumber(rows.Phone),
                     Account = rows.Account,
-                    CreateDate = rows?.CreateDate.Value.ToString("yyyy/MM/dd"),
+                    CreateDate = rows.CreateDate?.ToString("yyyy/MM/dd"),
                     Email = rows.Email,
-                    ModifyDate = rows?.ModifyDate.Value.ToString("yyyy/MM/dd"),
+                    ModifyDate = rows.ModifyDate?.ToString("yyyy/MM/dd"),
                     ModifyUser = rows.ModifyUser
                 });
 
