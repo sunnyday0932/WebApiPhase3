@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using CoreProfiler;
+using Dapper;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
@@ -135,7 +136,10 @@ namespace WebApiPhase3Repository.Implement
         /// <returns></returns>
         public async Task<IEnumerable<AccountDataModel>> GetAccountList()
         {
-            var sql = @"SELECT [Account]
+            var stepName = $"{nameof(AccountRepository)}.{nameof(this.GetAccountList)}";
+            using (ProfilingSession.Current.Step(stepName))
+            {
+                var sql = @"SELECT [Account]
                               ,[Password]
                               ,[Phone]
                               ,[Email]
@@ -144,13 +148,14 @@ namespace WebApiPhase3Repository.Implement
                               ,[ModifyUser]
                           FROM [Northwind].[dbo].[Users]";
 
-            using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
-            {
-                var result = await conn.QueryAsync<AccountDataModel>(
-                    sql);
+                using (IDbConnection conn = this._databaseHelper.GetConnection(this._connectionString))
+                {
+                    var result = await conn.QueryAsync<AccountDataModel>(
+                        sql);
 
-                return result;
-            }
+                    return result;
+                }
+            }  
         }
 
         /// <summary>

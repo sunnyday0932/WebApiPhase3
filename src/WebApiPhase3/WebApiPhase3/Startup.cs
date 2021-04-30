@@ -1,3 +1,4 @@
+using CoreProfiler.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -61,6 +62,8 @@ namespace WebApiPhase3
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCoreProfiler(true);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

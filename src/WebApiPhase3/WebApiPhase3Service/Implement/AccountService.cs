@@ -1,11 +1,12 @@
-﻿using AutoMapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using CoreProfiler;
 using WebApiPhase3Common;
 using WebApiPhase3Common.Helper;
 using WebApiPhase3Common.Model;
@@ -236,36 +237,40 @@ namespace WebApiPhase3Service.Implement
         /// <returns></returns>
         public async Task<IEnumerable<AccountDto>> GetAccountList(PagingInfoModel paging)
         {
-            IEnumerable<AccountDto> result;
-            var data = await this._accountRepository.GetAccountList();
-            if (data != null &&
-                data.Any())
+            var stepName = $"{nameof(AccountService)}.{nameof(this.GetAccountList)}";
+            using (ProfilingSession.Current.Step(stepName))
             {
-                result = data.Select(rows => new AccountDto
+                IEnumerable<AccountDto> result;
+                var data = await this._accountRepository.GetAccountList();
+                if (data != null &&
+                    data.Any())
                 {
-                    Phone = ConvertPhoneNumber(rows.Phone),
-                    Account = rows.Account,
-                    CreateDate = rows.CreateDate?.ToString("yyyy/MM/dd"),
-                    Email = rows.Email,
-                    ModifyDate = rows.ModifyDate?.ToString("yyyy/MM/dd"),
-                    ModifyUser = rows.ModifyUser
-                });
+                    result = data.Select(rows => new AccountDto
+                    {
+                        Phone = ConvertPhoneNumber(rows.Phone),
+                        Account = rows.Account,
+                        CreateDate = rows.CreateDate?.ToString("yyyy/MM/dd"),
+                        Email = rows.Email,
+                        ModifyDate = rows.ModifyDate?.ToString("yyyy/MM/dd"),
+                        ModifyUser = rows.ModifyUser
+                    });
 
-                if (string.IsNullOrWhiteSpace(paging.OrderColumName))
-                {
-                    result = result.Order(ref paging);
+                    if (string.IsNullOrWhiteSpace(paging.OrderColumName))
+                    {
+                        result = result.Order(ref paging);
+                    }
+                    else
+                    {
+                        result = result.Order(_accountListColumMap[paging.OrderColumName], ref paging);
+                    }
                 }
                 else
                 {
-                    result = result.Order(_accountListColumMap[paging.OrderColumName], ref paging);
+                    result = null;
                 }
-            }
-            else
-            {
-                result = null;
-            }
 
-            return result;
+                return result;
+            }
         }
 
         /// <summary>

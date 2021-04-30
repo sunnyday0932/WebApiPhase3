@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CoreProfiler;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -57,19 +58,23 @@ namespace WebApiPhase3.Controller
         public async Task<PagingViewModel<AccountViewModel>> GetAccountList(
             [FromQuery] PagingParameter paging = default(PagingParameter))
         {
-            var pagingInfo = this._mapper.Map<PagingInfoModel>(paging);
-            var data = await this._accountService.GetAccountList(pagingInfo);
-            paging.TotalCount = pagingInfo.TotalCount;
-            paging.PageIndex = pagingInfo.PageIndex;
-
-            var result = this._mapper.Map<IEnumerable<AccountViewModel>>(data);
-            var pagingResult = this._mapper.Map<PageViewModel>(paging);
-
-            return new PagingViewModel<AccountViewModel>
+            var stepName = $"{nameof(AccountController)}.{nameof(this.GetAccountList)}";
+            using (ProfilingSession.Current.Step(stepName))
             {
-                Paging = pagingResult,
-                Result = result
-            };
+                var pagingInfo = this._mapper.Map<PagingInfoModel>(paging);
+                var data = await this._accountService.GetAccountList(pagingInfo);
+                paging.TotalCount = pagingInfo.TotalCount;
+                paging.PageIndex = pagingInfo.PageIndex;
+
+                var result = this._mapper.Map<IEnumerable<AccountViewModel>>(data);
+                var pagingResult = this._mapper.Map<PageViewModel>(paging);
+
+                return new PagingViewModel<AccountViewModel>
+                {
+                    Paging = pagingResult,
+                    Result = result
+                };
+            }  
         }
 
         /// <summary>
